@@ -2,8 +2,8 @@
 #include <Gosu/AutoLink.hpp>
 #include "Objekt.h"
 
-int x_breite = 800;
-int y_hoehe = 600;
+int x_breite = Gosu::screen_width() - 40;
+int y_hoehe = Gosu::screen_height() - 40;
 
 Objekt::Objekt(float x, float y, int winkel) {
 	this->x = x;
@@ -70,7 +70,7 @@ class GameWindow : public Gosu::Window
 public:
 
 	GameWindow()
-		: Window(x_breite+40, y_hoehe+40),
+		: Window(Gosu::screen_width(), Gosu::screen_height(), true),
 		Ente("rakete.png"),
 		cha(100, 100, 0, 3)																											// Initialisiere das Objekt
 	{
