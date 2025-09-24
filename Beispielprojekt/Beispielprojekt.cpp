@@ -4,6 +4,7 @@
 
 int x_breite = Gosu::screen_width() - 40;
 int y_hoehe = Gosu::screen_height() - 40;
+float scale_Ente = 0.1;
 
 Objekt::Objekt(float x, float y, int winkel) {
 	this->x = x;
@@ -71,8 +72,8 @@ public:
 
 	GameWindow()
 		: Window(Gosu::screen_width(), Gosu::screen_height(), true),
-		Ente("rakete.png"),
-		cha(100, 100, 0, 3)																											// Initialisiere das Objekt
+		Ente("ente.png"),
+		cha(100, 700, 0, 3)																											// Initialisiere das Objekt
 	{
 		set_caption("Gamewindow");
 	}
@@ -82,8 +83,7 @@ public:
 																																	// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
 	void draw() override
 	{
-		Ente.draw_rot(cha.get_x() + Ente.width() / 2, cha.get_y() + Ente.height() / 2, 0, cha.get_winkel());
-		
+		Ente.draw_rot(cha.get_x() + Ente.width() / 2 - 500, cha.get_y() + Ente.height() / 2 - 500, 0, cha.get_winkel(), 0.5, 0.5,scale_Ente, scale_Ente);
 	}
 
 																																	// Wird 60x pro Sekunde aufgerufen
@@ -101,11 +101,10 @@ public:
 			cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
 			cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
 		}
-
 	}
 };
 
-													// C++ Hauptprogramm
+																																	// C++ Hauptprogramm
 int main()
 {
 	
