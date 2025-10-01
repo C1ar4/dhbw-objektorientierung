@@ -59,3 +59,24 @@ public:
 	Laser(float x, float y, int winkel, float start_x, float start_y, bool schiesst, bool ende_erreicht);
 
 };
+
+
+class Baum : public Objekt {
+private:
+	float groesse_x;
+	float groesse_y;
+public:
+	Baum(float x, float y, int winkel, int groesse_x, int groesse_y) : Objekt(x, y, winkel), groesse_x(groesse_x), groesse_y(groesse_y) {}
+	float get_groesse_x() const;
+	float get_groesse_y() const;
+};
+
+class Stein : public Objekt {
+private:
+	float groesse_x;
+	float groesse_y;
+public:
+	Stein(float x, float y, int winkel, float groesse_x, float groesse_y) : Objekt(x, y, winkel), groesse_x(groesse_x), groesse_y(groesse_y) {}
+	float get_groesse_x() const;
+	float get_groesse_y() const;
+};

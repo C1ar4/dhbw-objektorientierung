@@ -95,16 +95,16 @@ public:
 				laser.set_x_start(cha.get_x());
 				laser.set_y(cha.get_y());
 				laser.set_y_start(cha.get_y());
-				
 			}
+
 			laser.set_schiesst(true);
 			laser.set_winkel(cha.get_winkel());
 			double laserspeed = 1000.0;
 			//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			laser.bewegen(Gosu::offset_x(cha.get_winkel(), laserspeed), Gosu::offset_y(cha.get_winkel(), laserspeed));		// Senden des Lasers bis zum Rand
-			
 		}
+
 		else if (!input().down(Gosu::KB_SPACE)) {
 			laser.set_schiesst(false);
 			laser.set_ende_erreicht(false);

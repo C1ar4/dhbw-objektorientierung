@@ -229,3 +229,20 @@ bool Laser::get_ende_erreicht() const {
 	return ende_erreicht;
 }
 Laser::Laser(float x, float y, int winkel, float start_x, float start_y, bool schiesst, bool ende_erreicht) : Objekt(x, y, winkel), start_x(start_x), start_y(start_y), schiesst(schiesst), ende_erreicht(ende_erreicht) {}
+
+
+
+
+float Baum::get_groesse_x() const {
+	return groesse_x;
+}
+float Baum::get_groesse_y() const {
+	return groesse_y;
+}
+
+float Stein:: get_groesse_x() const {
+	return groesse_x;
+}
+float Stein:: get_groesse_y() const {
+	return groesse_y;
+}
