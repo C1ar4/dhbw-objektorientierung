@@ -1,4 +1,4 @@
-#include "Objekt.h"
+#include "Objekte_deklarieren.h"
 
 
 extern int x_breite;

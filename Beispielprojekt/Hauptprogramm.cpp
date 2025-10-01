@@ -1,7 +1,7 @@
 #include <Gosu/Gosu.hpp>
 #include <Gosu/AutoLink.hpp>
 #include <string>			// hab ich noch eingefügt um den Winkel erstmal auszugeben, kann man dann auch grundsätzlich benutzen text auszugeben :)
-#include "Objekt.h"
+#include "Objekte_deklarieren.h"
 
 
 
@@ -115,7 +115,6 @@ public:
 																																	// C++ Hauptprogramm
 int main()
 {
-	
 	GameWindow window;
 	window.show();
 }

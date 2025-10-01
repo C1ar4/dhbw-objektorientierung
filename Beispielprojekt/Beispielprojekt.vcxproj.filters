@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Beispielprojekt.cpp">
+    <ClCompile Include="Hauptprogramm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Definitionen.cpp">
@@ -28,7 +28,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Objekt.h">
+    <ClInclude Include="Objekte_deklarieren.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
