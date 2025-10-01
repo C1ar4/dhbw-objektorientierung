@@ -45,6 +45,7 @@ public:
 	float get_y() const override;
 	int get_winkel() const override;
 	void bewegen(float dx, float dy);
+	void set_winkel(float w);
 	float get_x_start() const;
 	float get_y_start() const;
 	void set_x(float x);
