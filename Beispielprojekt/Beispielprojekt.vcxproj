@@ -173,7 +173,9 @@
     <ClCompile Include="Definitionen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="rakete.png" />
+    <Image Include="Baum.png" />
+    <Image Include="ente.png" />
+    <Image Include="Stein.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h" />

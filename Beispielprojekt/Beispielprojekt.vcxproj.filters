@@ -23,7 +23,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="rakete.png">
+    <Image Include="Baum.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="ente.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Stein.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

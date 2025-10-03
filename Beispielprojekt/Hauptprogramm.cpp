@@ -2,19 +2,33 @@
 #include <Gosu/AutoLink.hpp>
 #include <string>			// hab ich noch eingefügt um den Winkel erstmal auszugeben, kann man dann auch grundsätzlich benutzen text auszugeben :)
 #include "Objekte_deklarieren.h"
+#include <vector>
+using namespace std;
 
 
 
 int x_breite = Gosu::screen_width() - 0;
 int y_hoehe = Gosu::screen_height() - 0;
 float scale_Ente = 0.1;
+float scale_Baum = 0.15;
+float scale_Stein = 0.1;
 
+
+void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum);
+void ueberprüfe_kollision_baum(vector<Baum>& vector_baum, Laser& laser);
+
+void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein);
+void ueberprüfe_kollision_stein(vector<Stein>& vector_stein, Laser& laser);
 
 
 class GameWindow : public Gosu::Window
 {
 	Gosu::Image Ente;
-	Charakter cha;																													// Erzeuge ein Objekt der Klasse Objekt
+	Gosu::Image baum;
+	vector<Baum> vector_baum;
+	Gosu::Image stein;
+	vector<Stein> vector_stein;
+	Charakter cha;																													
 	Laser laser;
 	Gosu::Font font;				// erzeugt ein Text, der im Gamewindow ausgegeben werden kann
 	
@@ -23,11 +37,15 @@ public:
 	GameWindow()
 		: Window(Gosu::screen_width(), Gosu::screen_height(), true),
 		Ente("ente.png"),
-		cha(50, 380, 90, 3),																											// Initialisiere das Objekt
+		cha(50, 380, 90, 3),
+		baum ("Baum.png"),
+		stein("Stein.png"),														
 		laser(502, 693, 0, 100, 100, false, false),
-		font(20)						// 20 gibt die Textgroesse an
+		font(20)							// 20 gibt die Textgroesse an
 	{
 		set_caption("Gamewindow");
+		vector_baum.push_back(Baum(300, 300, 0, 40, 85));
+		vector_stein.push_back(Stein(600, 300, 0, 50, 40));
 	}
 
 																																	// Wird bis zu 60x pro Sekunde aufgerufen.
@@ -68,6 +86,9 @@ public:
 				font.draw_text(std::to_string(laser.get_winkel()), 100, 100, 0);   //muss man dann noch rausmachen 
 			}
 		}
+
+		draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
+		draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
 		Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
 	}
 
@@ -99,9 +120,12 @@ public:
 
 			laser.set_schiesst(true);
 			laser.set_winkel(cha.get_winkel());
-			double laserspeed = 1000.0;
+			double laserspeed = 50.0;
 			//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
+			
+			ueberprüfe_kollision_baum(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
+			ueberprüfe_kollision_stein(vector_stein, laser);										// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
 			laser.bewegen(Gosu::offset_x(cha.get_winkel(), laserspeed), Gosu::offset_y(cha.get_winkel(), laserspeed));		// Senden des Lasers bis zum Rand
 		}
 
@@ -117,4 +141,35 @@ int main()
 {
 	GameWindow window;
 	window.show();
+}
+
+
+void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum) {
+	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
+		baum.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel(), 0.5, 0.5, scale_Baum, scale_Baum);
+	}
+}
+
+void ueberprüfe_kollision_baum(vector<Baum>& vector_baum, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
+		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
+			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Baum trifft, hört er auf zu schießen
+			laser.set_ende_erreicht(true);
+		}
+	}
+}
+
+void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein) {
+	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
+		stein.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel(), 0.5, 0.5, scale_Stein, scale_Stein);
+	}
+}
+
+void ueberprüfe_kollision_stein(vector<Stein>& vector_stein, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
+		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
+			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Stein trifft, hört er auf zu schießen
+			laser.set_ende_erreicht(true);
+		}
+	}
 }

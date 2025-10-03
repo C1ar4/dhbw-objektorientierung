@@ -1,5 +1,6 @@
 #pragma once
 
+
 class Objekt {
 protected:
 	float x;
@@ -67,6 +68,12 @@ private:
 	float groesse_y;
 public:
 	Baum(float x, float y, int winkel, int groesse_x, int groesse_y) : Objekt(x, y, winkel), groesse_x(groesse_x), groesse_y(groesse_y) {}
+	void bewegen_x(float dx) override;
+	void bewegen_y(float dy) override;
+	void drehen(int dwinkel) override;
+	float get_x() const override;
+	float get_y() const override;
+	int get_winkel() const override;
 	float get_groesse_x() const;
 	float get_groesse_y() const;
 };
@@ -77,6 +84,12 @@ private:
 	float groesse_y;
 public:
 	Stein(float x, float y, int winkel, float groesse_x, float groesse_y) : Objekt(x, y, winkel), groesse_x(groesse_x), groesse_y(groesse_y) {}
+	void bewegen_x(float dx) override;
+	void bewegen_y(float dy) override;
+	void drehen(int dwinkel) override;
+	float get_x() const override;
+	float get_y() const override;
+	int get_winkel() const override;
 	float get_groesse_x() const;
 	float get_groesse_y() const;
 };

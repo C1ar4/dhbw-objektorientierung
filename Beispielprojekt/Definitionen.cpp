@@ -67,6 +67,8 @@ float Charakter::get_leben() const {
 }
 Charakter::Charakter(float x, float y, int winkel, int leben) : Objekt(x, y, winkel), leben(leben) {}
 
+
+
 void Laser::bewegen_x(float dx) {
 	if (!ende_erreicht) {
 		if (0 <= x + dx && x + dx <= x_breite) {																											//nicht benutzt, ist auch nicht ganz zielführend
@@ -232,7 +234,54 @@ Laser::Laser(float x, float y, int winkel, float start_x, float start_y, bool sc
 
 
 
-
+void Baum::bewegen_x(float dx) {
+	if (0 < x && x < x_breite) {																											//Begrenzung in x-Richtung
+		x += dx;
+	}
+	else if (x >= x_breite) {
+		if (dx < 0) {
+			x += dx;
+		}
+	}
+	else if (x <= 0) {
+		if (dx > 0) {
+			x += dx;
+		}
+	}
+}
+void Baum::bewegen_y(float dy) {
+	if (0 < y && y < y_hoehe) {																											//Begrenzung in y-Richtung
+		y += dy;
+	}
+	else if (y >= y_hoehe) {
+		if (dy < 0) {
+			y += dy;
+		}
+	}
+	else if (y <= 0) {
+		if (dy > 0) {
+			y += dy;
+		}
+	}
+}
+void Baum::drehen(int dwinkel) {
+	winkel += dwinkel;
+	if (winkel <= 0) {									// hab hier noch eingebaut, dass der Winkel immer zwischen 0 und 360 Grad bleibt
+		winkel += 360;
+	}
+	else if (winkel > 360) {
+		winkel -= 360;
+	}
+}
+float Baum::get_x() const {
+	return x;
+}
+float Baum::get_y() const {
+	return y;
+}
+int Baum::get_winkel() const {
+	return winkel;
+}
 float Baum::get_groesse_x() const {
 	return groesse_x;
 }
@@ -240,6 +289,56 @@ float Baum::get_groesse_y() const {
 	return groesse_y;
 }
 
+
+
+void Stein::bewegen_x(float dx) {
+	if (0 < x && x < x_breite) {																											//Begrenzung in x-Richtung
+		x += dx;
+	}
+	else if (x >= x_breite) {
+		if (dx < 0) {
+			x += dx;
+		}
+	}
+	else if (x <= 0) {
+		if (dx > 0) {
+			x += dx;
+		}
+	}
+}
+void Stein::bewegen_y(float dy) {
+	if (0 < y && y < y_hoehe) {																											//Begrenzung in y-Richtung
+		y += dy;
+	}
+	else if (y >= y_hoehe) {
+		if (dy < 0) {
+			y += dy;
+		}
+	}
+	else if (y <= 0) {
+		if (dy > 0) {
+			y += dy;
+		}
+	}
+}
+void Stein::drehen(int dwinkel) {
+	winkel += dwinkel;
+	if (winkel <= 0) {									// hab hier noch eingebaut, dass der Winkel immer zwischen 0 und 360 Grad bleibt
+		winkel += 360;
+	}
+	else if (winkel > 360) {
+		winkel -= 360;
+	}
+}
+float Stein::get_x() const {
+	return x;
+}
+float Stein::get_y() const {
+	return y;
+}
+int Stein::get_winkel() const {
+	return winkel;
+}
 float Stein:: get_groesse_x() const {
 	return groesse_x;
 }
