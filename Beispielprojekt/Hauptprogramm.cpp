@@ -5,14 +5,18 @@
 #include <vector>
 using namespace std;
 
+bool Fenster = false;		// true = Vollbild, false = Fenster
+int x_breite = 1920;
+int y_hoehe = 1080;
 
 int speed_drehen_ente = 1;
-int x_breite = Gosu::screen_width() - 0;
-int y_hoehe = Gosu::screen_height() - 0;
 float scale_Ente = 0.1;
 float scale_Baum = 0.15;
 float scale_Stein = 0.1;
-int FPS = 30;			//30, weil die Zeitmessung immer nur alle 500ms aktualisiert wird
+float scale_Karte_x = 1.3;
+float scale_Karte_y = 1.1;
+
+int FPS = 30;						//30, weil die Zeitmessung immer nur alle 500ms aktualisiert wird
 int FPS_counter = 0;
 unsigned long long  dzeit_start = 0;
 unsigned long long  dzeit = 0;
@@ -28,7 +32,8 @@ void ueberprüfe_kollision_stein(vector<Stein>& vector_stein, Laser& laser);
 
 
 class GameWindow : public Gosu::Window
-{
+{	
+	Gosu::Image Karte;
 	Gosu::Image Ente;
 	Gosu::Image baum;
 	vector<Baum> vector_baum;
@@ -41,7 +46,8 @@ class GameWindow : public Gosu::Window
 public:
 
 	GameWindow()
-		: Window(Gosu::screen_width(), Gosu::screen_height(), true),
+		: Window(x_breite, y_hoehe, Fenster),
+		Karte("Karte.png"),
 		Ente("ente.png"),
 		cha(50, 380, 90, 3),
 		baum ("Baum.png"),
@@ -50,8 +56,8 @@ public:
 		font(20)							// 20 gibt die Textgroesse an
 	{
 		set_caption("Gamewindow");
-		vector_baum.push_back(Baum(300, 300, 0, 40, 85));
-		vector_stein.push_back(Stein(600, 300, 0, 50, 40));
+		vector_baum.push_back(Baum(300, 100, 0, 40, 85));
+		vector_stein.push_back(Stein(600, 100, 0, 50, 40));
 	}
 
 																																	// Wird bis zu 60x pro Sekunde aufgerufen.
@@ -59,14 +65,15 @@ public:
 																																	// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
 	void draw() override
 	{
+		Karte.draw_rot(x_breite/2, y_hoehe/2, 0, 0, 0.5, 0.5, scale_Karte_x, scale_Karte_y);
 		FPS_counter++;													//FPS Anzeige
 		if(Gosu::milliseconds() - dzeit_start >= 500) {
 			dzeit_start = Gosu::milliseconds();
 			FPS = FPS_counter;
 			FPS_counter = 0;
 		}
-		font.draw_text(std::to_string(FPS * 2) + "  FPS", 10, 10, 0);
-		font.draw_text(std::to_string(Gosu::milliseconds() - dzeit) + "  ms", 10, 25, 0);				// Zeigt die Zeit zwischen 2 Frames an
+		font.draw_text(to_string(FPS * 2) + "  FPS", 10, 10, 0);
+		font.draw_text(to_string(Gosu::milliseconds() - dzeit) + "  ms" + to_string(y_hoehe), 10, 25, 0);				// Zeigt die Zeit zwischen 2 Frames an
 		dzeit = Gosu::milliseconds();
 		
 
@@ -88,7 +95,7 @@ public:
 					laser.get_x() - 1, laser.get_y() + 1, Gosu::Color::RED,
 					0.0
 				);
-				font.draw_text(std::to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);    // muss man dann noch rausmachen, hatte ich ursprünglich drin, weil etwas nicht ganz funktioniert hat und ich rausfinden wollte warum
+				font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);    // muss man dann noch rausmachen, hatte ich ursprünglich drin, weil etwas nicht ganz funktioniert hat und ich rausfinden wollte warum
 			}
 			else {
 				Gosu::Graphics::draw_line(
@@ -101,7 +108,7 @@ public:
 					laser.get_x() - 1, laser.get_y() - 1, Gosu::Color::RED,
 					0.0
 				);
-				font.draw_text(std::to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
+				font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
 			}
 		}
 

@@ -32,6 +32,9 @@
     <Image Include="Stein.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Karte.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h">
