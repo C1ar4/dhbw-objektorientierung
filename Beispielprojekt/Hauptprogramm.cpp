@@ -6,12 +6,18 @@
 using namespace std;
 
 
-
+int speed_drehen_ente = 1;
 int x_breite = Gosu::screen_width() - 0;
 int y_hoehe = Gosu::screen_height() - 0;
 float scale_Ente = 0.1;
 float scale_Baum = 0.15;
 float scale_Stein = 0.1;
+int FPS = 30;			//30, weil die Zeitmessung immer nur alle 500ms aktualisiert wird
+int FPS_counter = 0;
+unsigned long long  dzeit_start = 0;
+unsigned long long  dzeit = 0;
+int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen wird, damit die Bewegung der Objekte nicht zu ruckelig wirkt
+
 
 
 void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum);
@@ -53,6 +59,18 @@ public:
 																																	// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
 	void draw() override
 	{
+		FPS_counter++;													//FPS Anzeige
+		if(Gosu::milliseconds() - dzeit_start >= 500) {
+			dzeit_start = Gosu::milliseconds();
+			FPS = FPS_counter;
+			FPS_counter = 0;
+		}
+		font.draw_text(std::to_string(FPS * 2) + "  FPS", 10, 10, 0);
+		font.draw_text(std::to_string(Gosu::milliseconds() - dzeit) + "  ms", 10, 25, 0);				// Zeigt die Zeit zwischen 2 Frames an
+		dzeit = Gosu::milliseconds();
+		
+
+
 		if (laser.get_schiesst()) {										// wenn der Laser schießen soll, werden 3 parallele linien als Laser ausgegeben
 			Gosu::Graphics::draw_line(
 				laser.get_x_start(), laser.get_y_start(), Gosu::Color::WHITE,
@@ -70,7 +88,7 @@ public:
 					laser.get_x() - 1, laser.get_y() + 1, Gosu::Color::RED,
 					0.0
 				);
-				font.draw_text(std::to_string(laser.get_winkel()), 100, 100, 0);    // muss man dann noch rausmachen, hatte ich ursprünglich drin, weil etwas nicht ganz funktioniert hat und ich rausfinden wollte warum
+				font.draw_text(std::to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);    // muss man dann noch rausmachen, hatte ich ursprünglich drin, weil etwas nicht ganz funktioniert hat und ich rausfinden wollte warum
 			}
 			else {
 				Gosu::Graphics::draw_line(
@@ -83,7 +101,7 @@ public:
 					laser.get_x() - 1, laser.get_y() - 1, Gosu::Color::RED,
 					0.0
 				);
-				font.draw_text(std::to_string(laser.get_winkel()), 100, 100, 0);   //muss man dann noch rausmachen 
+				font.draw_text(std::to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
 			}
 		}
 
@@ -94,18 +112,19 @@ public:
 
 																																	// Wird 60x pro Sekunde aufgerufen
 	void update() override
-	{
+	{ 
+		for (int i = 0; i < updates_per_frame; i++) {
 		if(input().down(Gosu::KB_LEFT)){																							// Bewege die Ente nach links
 		
-			cha.drehen(-5);
+			cha.drehen(-(speed_drehen_ente));
 			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 		}
 		else if(input().down(Gosu::KB_RIGHT)){																						// Bewege die Ente nach rechts
-			cha.drehen(5);
+			cha.drehen(speed_drehen_ente);
 			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 		}
 		else if (input().down(Gosu::KB_UP)) {
-			double speed = 5.0;
+			double speed = 5.0/updates_per_frame;
 			cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
 			cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
 			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterbewegt
@@ -120,12 +139,13 @@ public:
 
 			laser.set_schiesst(true);
 			laser.set_winkel(cha.get_winkel());
-			double laserspeed = 50.0;
 			//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			
 			ueberprüfe_kollision_baum(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
 			ueberprüfe_kollision_stein(vector_stein, laser);										// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
+			
+			double laserspeed = 50.0 / updates_per_frame;		//muss aktuell so "langsam" sein, weil der Laser sonst teils durch die Objekte hindurch schießen kann
 			laser.bewegen(Gosu::offset_x(cha.get_winkel(), laserspeed), Gosu::offset_y(cha.get_winkel(), laserspeed));		// Senden des Lasers bis zum Rand
 		}
 
@@ -133,6 +153,7 @@ public:
 			laser.set_schiesst(false);
 			laser.set_ende_erreicht(false);
 		}
+	}
 	}
 };
 
