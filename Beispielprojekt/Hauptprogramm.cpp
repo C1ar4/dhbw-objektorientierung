@@ -56,13 +56,13 @@ public:
 		font(20)							// 20 gibt die Textgroesse an
 	{
 		set_caption("Gamewindow");
-		vector_baum.push_back(Baum(300, 100, 0, 40, 85));
-		vector_stein.push_back(Stein(600, 100, 0, 50, 40));
+		vector_baum.push_back(Baum(300, 100, 0, 20, 70));
+		vector_stein.push_back(Stein(600, 100, 0, 35, 35));
 	}
 
-																																	// Wird bis zu 60x pro Sekunde aufgerufen.
-																																	// Wenn die Grafikkarte oder der Prozessor nicht mehr hinterherkommen,
-																																	// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
+																				// Wird bis zu 60x pro Sekunde aufgerufen.
+																				// Wenn die Grafikkarte oder der Prozessor nicht mehr hinterherkommen,
+																				// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
 	void draw() override
 	{
 		Karte.draw_rot(x_breite/2, y_hoehe/2, 0, 0, 0.5, 0.5, scale_Karte_x, scale_Karte_y);
@@ -117,61 +117,61 @@ public:
 		Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
 	}
 
-																																	// Wird 60x pro Sekunde aufgerufen
+															// Wird 60x pro Sekunde aufgerufen
 	void update() override
 	{ 
-		for (int i = 0; i < updates_per_frame; i++) {
-		if(input().down(Gosu::KB_LEFT)){																							// Bewege die Ente nach links
+		for (int i = 0; i < updates_per_frame; i++) {		//läuft durch die Schleife, damit die Eingaben öfter pro Frame überprüft werden
+			if(input().down(Gosu::KB_LEFT)){				// Bewege die Ente nach links
 		
-			cha.drehen(-(speed_drehen_ente));
-			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
-		}
-		else if(input().down(Gosu::KB_RIGHT)){																						// Bewege die Ente nach rechts
-			cha.drehen(speed_drehen_ente);
-			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
-		}
-		else if (input().down(Gosu::KB_UP)) {
-			double speed = 5.0/updates_per_frame;
-			cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
-			cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
-			laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterbewegt
-		}
-		else if (input().down(Gosu::KB_SPACE)) {
-			if (!laser.get_schiesst()) {				// beim ersten Durchgang, nach drücken, werden die koordinaten der Ente dem laser übergeben
-				laser.set_x(cha.get_x());
-				laser.set_x_start(cha.get_x());
-				laser.set_y(cha.get_y());
-				laser.set_y_start(cha.get_y());
+				cha.drehen(-(speed_drehen_ente));
+				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
+			}
+			else if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts
+				cha.drehen(speed_drehen_ente);
+				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
+			}
+			else if (input().down(Gosu::KB_UP)) {
+				double speed = 5.0/updates_per_frame;
+				cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
+				cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
+				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterbewegt
+			}
+			else if (input().down(Gosu::KB_SPACE)) {
+				if (!laser.get_schiesst()) {				// beim ersten Durchgang, nach drücken, werden die koordinaten der Ente dem laser übergeben
+					laser.set_x(cha.get_x());
+					laser.set_x_start(cha.get_x());
+					laser.set_y(cha.get_y());
+					laser.set_y_start(cha.get_y());
+				}
+
+				laser.set_schiesst(true);
+				laser.set_winkel(cha.get_winkel());
+				//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
+				//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
+			
+				for (int laserspeed = 1000; laserspeed > 0; laserspeed--) {										// Schleife, damtit der Laser nicht durch Ojekte glitcht
+				ueberprüfe_kollision_baum(vector_baum, laser);													// überprüft ob der Laser ein Obejrkt (Baum) trifft
+				ueberprüfe_kollision_stein(vector_stein, laser);												// überprüft ob der Laser ein Obejrkt (Stein) trifft
+				laser.bewegen(Gosu::offset_x(cha.get_winkel(), 1), Gosu::offset_y(cha.get_winkel(), 1));		// Senden des Lasers bis zum Rand
+				}
 			}
 
-			laser.set_schiesst(true);
-			laser.set_winkel(cha.get_winkel());
-			//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
-			//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
-			
-			ueberprüfe_kollision_baum(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
-			ueberprüfe_kollision_stein(vector_stein, laser);										// überprüft ob der Laser ein Obejrkt (Baum/Stein) trifft
-			
-			double laserspeed = 50.0 / updates_per_frame;		//muss aktuell so "langsam" sein, weil der Laser sonst teils durch die Objekte hindurch schießen kann
-			laser.bewegen(Gosu::offset_x(cha.get_winkel(), laserspeed), Gosu::offset_y(cha.get_winkel(), laserspeed));		// Senden des Lasers bis zum Rand
-		}
-
-		else if (!input().down(Gosu::KB_SPACE)) {
+			else if (!input().down(Gosu::KB_SPACE)) {
 			laser.set_schiesst(false);
 			laser.set_ende_erreicht(false);
+			}
 		}
-	}
 	}
 };
 
-																																	// C++ Hauptprogramm
+						// C++ Hauptprogramm
 int main()
 {
 	GameWindow window;
 	window.show();
 }
 
-
+																						//Definitioon der Funktionen
 void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum) {
 	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
 		baum.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel(), 0.5, 0.5, scale_Baum, scale_Baum);
