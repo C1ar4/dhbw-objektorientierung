@@ -4,7 +4,7 @@
 #include "Objekte_deklarieren.h"
 #include <vector>
 #include <cmath>
-#include <iostream>
+#include <iostream>  //ich hatte mal was damit versucht, hat aber nicht funktioniert. Insofern kann das auch eigentlich wieder weg
 using namespace std;
 
 bool Fenster = false;		// true = Vollbild, false = Fenster
@@ -134,8 +134,8 @@ public:
 				font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
 			}
 		}
-		font.draw_text(to_string(cha.winkel_zu_stein) + ", " + to_string(cha.get_winkel()) + ", " + to_string(cha.winkeldiff_zum_stein) + ", " + to_string(cha.abstand_stein), 150, 20, 0);
-		font.draw_text(to_string(cha.test), 150, 40, 0);
+		font.draw_text(to_string(cha.winkel_zu_stein) + ", " + to_string(cha.get_winkel()) + ", " + to_string(cha.winkeldiff_zum_stein) + ", " + to_string(cha.abstand_stein), 150, 20, 0);  //ist nur zur Fehlersuche drin. kann also auch wieder raus
+		font.draw_text(to_string(cha.test), 150, 40, 0); //hier genauso
 		draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
 		draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
 		Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
@@ -150,12 +150,12 @@ public:
 				cha.drehen(-(speed_drehen_ente));
 				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 			}
-			if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts
+			if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts													ich hab hier das else if zu einem if gemacht. ich finds besser wenn sich die Ente auch während dem Bewegen drehen kann
 				cha.drehen(speed_drehen_ente);
 				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 			}
 			if (input().down(Gosu::KB_UP)) {
-				ueberprüfe_kollision_stein_character(vector_stein, cha);
+				ueberprüfe_kollision_stein_character(vector_stein, cha);							// hier auch das else if mit if ausgetauscht, gleiche Begründung wie oben
 				ueberprüfe_kollision_baum_character(vector_baum, cha);
 				if (cha.get_bewegen()) {
 					double speed = 5.0 / updates_per_frame;

@@ -20,11 +20,11 @@ public:
 class Charakter : public Objekt {
 private:
 		int leben;
-		float groesse_x;
+		float groesse_x;		//ich hatte erst versucht, damit etwas zu machen, hab ich aber letztendlich nicht. Bis jetzt werden die groessen also nicht benutzt. Ich lass es aber mal noch drin
 		float groesse_y;
 		bool bewegen;
 public:
-	int winkel_zu_stein;
+	int winkel_zu_stein;					//diese public Variablen hab ich für die Fehlersuche eingebaut und so ging es einfacher. man braucht sie aber eigentlich nicht
 	int winkeldiff_zum_stein;
 	float abstand_stein;
 	int test;
