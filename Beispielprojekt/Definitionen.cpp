@@ -65,7 +65,19 @@ void Charakter::schaden(int dmg) {
 float Charakter::get_leben() const {
 	return leben;
 }
-Charakter::Charakter(float x, float y, int winkel, int leben) : Objekt(x, y, winkel), leben(leben) {}
+float Charakter::get_groesse_x() const {
+	return groesse_x;
+}
+float Charakter::get_groesse_y() const {
+	return groesse_y;
+}
+void Charakter::set_bewegen(bool bewegtsich) {
+	bewegen = bewegtsich;
+}
+bool Charakter::get_bewegen() const {
+	return bewegen;
+}
+Charakter::Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen) : Objekt(x, y, winkel), leben(leben), groesse_x(groesse_x), groesse_y(groesse_y), bewegen(bewegen) {}
 
 
 

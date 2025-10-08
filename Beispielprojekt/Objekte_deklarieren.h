@@ -20,7 +20,14 @@ public:
 class Charakter : public Objekt {
 private:
 		int leben;
+		float groesse_x;
+		float groesse_y;
+		bool bewegen;
 public:
+	int winkel_zu_stein;
+	int winkeldiff_zum_stein;
+	float abstand_stein;
+	int test;
 		void bewegen_x(float dx) override;
 		void bewegen_y(float dy) override;
 		void drehen(int dwinkel) override;	
@@ -29,7 +36,11 @@ public:
 		int get_winkel() const override;
 		void schaden(int dmg);
 		float get_leben() const;
-		Charakter(float x, float y, int winkel, int leben);
+		float get_groesse_x() const;
+		float get_groesse_y() const;
+		void set_bewegen(bool bewegtsich);
+		bool get_bewegen()const;
+		Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen);
 };
 
 class Laser : public Objekt {

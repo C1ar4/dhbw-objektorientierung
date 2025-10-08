@@ -3,6 +3,8 @@
 #include <string>			// hab ich noch eingefügt um den Winkel erstmal auszugeben, kann man dann auch grundsätzlich benutzen text auszugeben :)
 #include "Objekte_deklarieren.h"
 #include <vector>
+#include <cmath>
+#include <iostream>
 using namespace std;
 
 bool Fenster = false;		// true = Vollbild, false = Fenster
@@ -25,10 +27,14 @@ int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen
 
 
 void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum);
-void ueberprüfe_kollision_baum(vector<Baum>& vector_baum, Laser& laser);
+void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser);
+void ueberprüfe_kollision_baum_character(vector<Baum>& vector_baum, Charakter& ente);
+
 
 void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein);
-void ueberprüfe_kollision_stein(vector<Stein>& vector_stein, Laser& laser);
+void ueberprüfe_kollision_stein_laser(vector<Stein>& vector_stein, Laser& laser);
+void ueberprüfe_kollision_stein_character(vector<Stein>& vector_stein, Charakter& ente);
+
 
 
 class GameWindow : public Gosu::Window
@@ -49,15 +55,32 @@ public:
 		: Window(x_breite, y_hoehe, Fenster),
 		Karte("Karte.png"),
 		Ente("ente.png"),
-		cha(50, 380, 90, 3),
+		cha(50, 380, 90, 3, 35, 35, true),
 		baum ("Baum.png"),
 		stein("Stein.png"),														
 		laser(502, 693, 0, 100, 100, false, false),
 		font(20)							// 20 gibt die Textgroesse an
 	{
 		set_caption("Gamewindow");
+		vector_baum.push_back(Baum(200, 150, 0, 20, 70));
 		vector_baum.push_back(Baum(300, 100, 0, 20, 70));
+		vector_baum.push_back(Baum(225, 800, 0, 20, 70));
+		vector_baum.push_back(Baum(800, 900, 0, 20, 70));
+		vector_baum.push_back(Baum(600, 400, 0, 20, 70));
+		vector_baum.push_back(Baum(1700, 900, 0, 20, 70));
+		vector_baum.push_back(Baum(1800, 800, 0, 20, 70));
+		vector_baum.push_back(Baum(1830, 930, 0, 20, 70));
+		vector_baum.push_back(Baum(1750, 150, 0, 20, 70));
 		vector_stein.push_back(Stein(600, 100, 0, 35, 35));
+		vector_stein.push_back(Stein(800, 450, 0, 35, 35));
+		vector_stein.push_back(Stein(250, 930, 0, 35, 35));
+		vector_stein.push_back(Stein(240, 985, 0, 35, 35));
+		vector_stein.push_back(Stein(1300, 380, 0, 35, 35));
+		vector_stein.push_back(Stein(1220, 400, 0, 35, 35));
+		vector_stein.push_back(Stein(1100, 600, 0, 35, 35));
+		vector_stein.push_back(Stein(1650, 610, 0, 35, 35));
+		vector_stein.push_back(Stein(1800, 400, 0, 35, 35));
+		vector_stein.push_back(Stein(1500, 950, 0, 35, 35));
 	}
 
 																				// Wird bis zu 60x pro Sekunde aufgerufen.
@@ -111,7 +134,8 @@ public:
 				font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
 			}
 		}
-
+		font.draw_text(to_string(cha.winkel_zu_stein) + ", " + to_string(cha.get_winkel()) + ", " + to_string(cha.winkeldiff_zum_stein) + ", " + to_string(cha.abstand_stein), 150, 20, 0);
+		font.draw_text(to_string(cha.test), 150, 40, 0);
 		draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
 		draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
 		Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
@@ -126,14 +150,19 @@ public:
 				cha.drehen(-(speed_drehen_ente));
 				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 			}
-			else if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts
+			if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts
 				cha.drehen(speed_drehen_ente);
 				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 			}
-			else if (input().down(Gosu::KB_UP)) {
-				double speed = 5.0/updates_per_frame;
-				cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
-				cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
+			if (input().down(Gosu::KB_UP)) {
+				ueberprüfe_kollision_stein_character(vector_stein, cha);
+				ueberprüfe_kollision_baum_character(vector_baum, cha);
+				if (cha.get_bewegen()) {
+					double speed = 5.0 / updates_per_frame;
+					cha.bewegen_x(Gosu::offset_x(cha.get_winkel(), speed));
+					cha.bewegen_y(Gosu::offset_y(cha.get_winkel(), speed));
+				}
+				
 				laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterbewegt
 			}
 			else if (input().down(Gosu::KB_SPACE)) {
@@ -150,8 +179,8 @@ public:
 				//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			
 				for (int laserspeed = 1000; laserspeed > 0; laserspeed--) {										// Schleife, damtit der Laser nicht durch Ojekte glitcht
-				ueberprüfe_kollision_baum(vector_baum, laser);													// überprüft ob der Laser ein Obejrkt (Baum) trifft
-				ueberprüfe_kollision_stein(vector_stein, laser);												// überprüft ob der Laser ein Obejrkt (Stein) trifft
+				ueberprüfe_kollision_baum_laser(vector_baum, laser);													// überprüft ob der Laser ein Obejrkt (Baum) trifft
+				ueberprüfe_kollision_stein_laser(vector_stein, laser);												// überprüft ob der Laser ein Obejrkt (Stein) trifft
 				laser.bewegen(Gosu::offset_x(cha.get_winkel(), 1), Gosu::offset_y(cha.get_winkel(), 1));		// Senden des Lasers bis zum Rand
 				}
 			}
@@ -178,7 +207,7 @@ void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum) {
 	}
 }
 
-void ueberprüfe_kollision_baum(vector<Baum>& vector_baum, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
 	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
 		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
 			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Baum trifft, hört er auf zu schießen
@@ -187,17 +216,106 @@ void ueberprüfe_kollision_baum(vector<Baum>& vector_baum, Laser& laser) {							
 	}
 }
 
+void ueberprüfe_kollision_baum_character(vector<Baum>& vector_baum, Charakter& ente) {
+	/*float xabstand;
+	float xabstandwinkel;
+	float yabstand;
+	float yabstandwinkel;
+	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
+		xabstand = abs(ente.get_x() - it->get_x());
+		xabstandwinkel = abs(ente.get_x() - 5 * cos(ente.get_winkel() * 3.14159 / 180) - it->get_x());
+		yabstand = abs(ente.get_y() - it->get_y());
+		yabstandwinkel = abs(ente.get_y() + ente.get_groesse_y() * sin(ente.get_winkel() * 3.14159 / 180) - it->get_y());
+		if ((xabstand < 70) && (yabstand < 70) && xabstandwinkel <= xabstand && yabstandwinkel <= yabstand) {
+			return false;
+		}
+	}
+	return true;*/
+
+	float xabstand;
+	float yabstand;
+	float abstand;
+	int winkel;
+	int winkeldifferenz = 0;
+	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
+		xabstand = fabs(ente.get_x() - it->get_x());
+		yabstand = fabs(ente.get_y() - it->get_y());
+		abstand = sqrtf(xabstand * xabstand + yabstand * yabstand);
+		if (abstand < 85) {
+			winkel = atan2(it->get_y() - ente.get_y(), it->get_x() - ente.get_x()) * (180.0 / M_PI);
+			winkel = winkel + 90;
+			if (winkel < 0) {
+				winkel = winkel + 360;
+			}
+			winkeldifferenz = abs(ente.get_winkel() - winkel);
+			if (winkeldifferenz > 180) {
+				winkeldifferenz = 360 - winkeldifferenz;
+			}
+			if (winkeldifferenz > 45) {
+				ente.set_bewegen(true);
+				ente.test = 1;
+			}
+			else {
+				ente.set_bewegen(false);
+				ente.test = 0;
+			}
+
+			ente.winkel_zu_stein = winkel;
+			ente.winkeldiff_zum_stein = winkeldifferenz;
+			ente.abstand_stein = abstand;
+		}
+	}
+
+}
+
 void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein) {
 	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
 		stein.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel(), 0.5, 0.5, scale_Stein, scale_Stein);
 	}
 }
 
-void ueberprüfe_kollision_stein(vector<Stein>& vector_stein, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+void ueberprüfe_kollision_stein_laser(vector<Stein>& vector_stein, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
 	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
 		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
 			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Stein trifft, hört er auf zu schießen
 			laser.set_ende_erreicht(true);
 		}
 	}
+}
+
+void ueberprüfe_kollision_stein_character(vector<Stein>& vector_stein, Charakter& ente) {
+	float xabstand;
+	float yabstand;
+	float abstand;
+	int winkel;
+	int winkeldifferenz=0;
+	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
+		xabstand = fabs(ente.get_x() - it->get_x());
+		yabstand = fabs(ente.get_y() - it->get_y());
+		abstand = sqrtf(xabstand * xabstand + yabstand * yabstand);
+		if (abstand < 70) {
+			winkel = atan2(it->get_y() - ente.get_y(), it->get_x() - ente.get_x()) * (180.0 / M_PI);
+			winkel = winkel + 90;
+			if (winkel < 0) {
+				winkel = winkel + 360;
+			}
+			winkeldifferenz = abs(ente.get_winkel() - winkel);
+			if (winkeldifferenz > 180) {
+				winkeldifferenz = 360 - winkeldifferenz;
+			}
+			if (winkeldifferenz > 45) {
+				ente.set_bewegen(true);
+				ente.test = 1;
+			}
+			else {
+				ente.set_bewegen(false);
+				ente.test = 0;
+			}
+			
+			ente.winkel_zu_stein = winkel;
+			ente.winkeldiff_zum_stein = winkeldifferenz;
+			ente.abstand_stein = abstand;
+		}
+	}
+	
 }
