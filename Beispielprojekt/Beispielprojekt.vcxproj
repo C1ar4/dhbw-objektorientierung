@@ -175,6 +175,8 @@
   <ItemGroup>
     <Image Include="Baum.png" />
     <Image Include="ente.png" />
+    <Image Include="Gegner_links.png" />
+    <Image Include="Gegner_rechts.png" />
     <Image Include="Karte.png" />
     <Image Include="Stein.png" />
   </ItemGroup>

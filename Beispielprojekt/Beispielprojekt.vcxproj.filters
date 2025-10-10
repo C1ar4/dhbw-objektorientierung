@@ -35,6 +35,12 @@
     <Image Include="Karte.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Gegner_links.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Gegner_rechts.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h">
