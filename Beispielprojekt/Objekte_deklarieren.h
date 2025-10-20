@@ -23,6 +23,7 @@ private:
 		float groesse_x;		//ich hatte erst versucht, damit etwas zu machen, hab ich aber letztendlich nicht. Bis jetzt werden die groessen also nicht benutzt. Ich lass es aber mal noch drin
 		float groesse_y;
 		bool bewegen;
+		bool existiert;
 public:
 	int winkel_zu_stein;					//diese public Variablen hab ich für die Fehlersuche eingebaut und so ging es einfacher. man braucht sie aber eigentlich nicht
 	int winkeldiff_zum_stein;
@@ -34,13 +35,16 @@ public:
 		float get_x() const override;
 		float get_y() const override;
 		int get_winkel() const override;
+		void set_winkel(int uebergebner_winkel);
 		void schaden(int dmg);
 		float get_leben() const;
 		float get_groesse_x() const;
 		float get_groesse_y() const;
 		void set_bewegen(bool bewegtsich);
 		bool get_bewegen()const;
-		Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen);
+		void set_existiert(bool existiert_sogar);
+		bool get_existiert()const;
+		Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen, bool existiert);
 };
 
 class Laser : public Objekt {

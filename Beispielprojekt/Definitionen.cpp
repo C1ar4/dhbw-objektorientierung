@@ -59,6 +59,9 @@ float Charakter::get_y() const {
 int Charakter::get_winkel() const {
 	return winkel;
 }
+void Charakter::set_winkel(int uebergebener_winkel) {
+	winkel = uebergebener_winkel;
+}
 void Charakter::schaden(int dmg) {
 	leben -= dmg;
 }
@@ -77,7 +80,13 @@ void Charakter::set_bewegen(bool bewegtsich) {
 bool Charakter::get_bewegen() const {
 	return bewegen;
 }
-Charakter::Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen) : Objekt(x, y, winkel), leben(leben), groesse_x(groesse_x), groesse_y(groesse_y), bewegen(bewegen) {}
+void Charakter::set_existiert(bool existiert_sogar) {
+	existiert = existiert_sogar;
+}
+bool Charakter::get_existiert() const{
+	return existiert;
+}
+Charakter::Charakter(float x, float y, int winkel, int leben, float groesse_x, float groesse_y, bool bewegen, bool existiert) : Objekt(x, y, winkel), leben(leben), groesse_x(groesse_x), groesse_y(groesse_y), bewegen(bewegen), existiert(existiert) {}
 
 
 

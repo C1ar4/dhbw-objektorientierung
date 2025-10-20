@@ -13,6 +13,7 @@ int y_hoehe = 1080;
 
 int speed_drehen_ente = 1;
 float scale_Ente = 0.1;
+float scale_fisch = 0.08;
 float scale_Baum = 0.15;
 float scale_Stein = 0.1;
 float scale_Karte_x = 1.3;
@@ -25,6 +26,7 @@ unsigned long long  dzeit = 0;
 int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen wird, damit die Bewegung der Objekte nicht zu ruckelig wirkt
 
 
+void ueberprüfe_kollision_character_gegner(Charakter& gegner, Charakter& ente);
 
 void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum);
 void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser);
@@ -45,7 +47,9 @@ class GameWindow : public Gosu::Window
 	vector<Baum> vector_baum;
 	Gosu::Image stein;
 	vector<Stein> vector_stein;
-	Charakter cha;																													
+	Charakter cha;
+	Gosu::Image Gegner;
+	Charakter fisch;
 	Laser laser;
 	Gosu::Font font;				// erzeugt ein Text, der im Gamewindow ausgegeben werden kann
 	
@@ -55,9 +59,11 @@ public:
 		: Window(x_breite, y_hoehe, Fenster),
 		Karte("Karte.png"),
 		Ente("ente.png"),
-		cha(50, 380, 90, 3, 35, 35, true),
+		cha(50, 380, 90, 3, 35, 35, true, true),
 		baum ("Baum.png"),
-		stein("Stein.png"),														
+		stein("Stein.png"),	
+		Gegner("Gegner_links.png"),
+		fisch(1000, 200, 0, 3, 35, 35, true, true),
 		laser(502, 693, 0, 100, 100, false, false),
 		font(20)							// 20 gibt die Textgroesse an
 	{
@@ -135,9 +141,12 @@ public:
 			}
 		}
 		font.draw_text(to_string(cha.winkel_zu_stein) + ", " + to_string(cha.get_winkel()) + ", " + to_string(cha.winkeldiff_zum_stein) + ", " + to_string(cha.abstand_stein), 150, 20, 0);  //ist nur zur Fehlersuche drin. kann also auch wieder raus
-		font.draw_text(to_string(cha.test), 150, 40, 0); //hier genauso
+		font.draw_text(to_string(cha.test)+ ", " + to_string(cha.get_leben()), 150, 40, 0); //hier genauso
 		draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
 		draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
+		if (fisch.get_existiert()) {
+			Gegner.draw_rot(fisch.get_x(), fisch.get_y(), 0, fisch.get_winkel(), 0.5, 0.5, scale_fisch, scale_fisch);
+		}
 		Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
 	}
 
@@ -189,6 +198,31 @@ public:
 			laser.set_schiesst(false);
 			laser.set_ende_erreicht(false);
 			}
+
+			
+			ueberprüfe_kollision_stein_character(vector_stein, fisch);							// hier auch das else if mit if ausgetauscht, gleiche Begründung wie oben
+			ueberprüfe_kollision_baum_character(vector_baum, fisch);
+			int winkel;
+			winkel = atan2(cha.get_y() - fisch.get_y(), cha.get_x() - fisch.get_x()) * (180.0 / M_PI);
+			winkel = winkel + 90;
+			
+			
+			if (winkel < 0) {
+				winkel = winkel + 360;
+			}
+			fisch.set_winkel(winkel);
+			/*while (!fisch.get_bewegen()) {
+				fisch.drehen(speed_drehen_ente);
+				ueberprüfe_kollision_stein_character(vector_stein, fisch);							// hier auch das else if mit if ausgetauscht, gleiche Begründung wie oben
+				ueberprüfe_kollision_baum_character(vector_baum, fisch);
+			}*/
+			if (fisch.get_bewegen()) {
+				double speed = 2.0 / updates_per_frame;
+				fisch.bewegen_x(Gosu::offset_x(fisch.get_winkel(), speed));
+				fisch.bewegen_y(Gosu::offset_y(fisch.get_winkel(), speed));
+			}
+
+			ueberprüfe_kollision_character_gegner(fisch, cha);
 		}
 	}
 };
@@ -200,6 +234,21 @@ int main()
 	window.show();
 }
 
+
+void ueberprüfe_kollision_character_gegner(Charakter& gegner, Charakter& ente) {
+	float xabstand;
+	float yabstand;
+	float abstand;
+	
+	xabstand = fabs(ente.get_x() - gegner.get_x());
+	yabstand = fabs(ente.get_y() - gegner.get_y());
+	abstand = sqrtf(xabstand * xabstand + yabstand * yabstand);
+	if (abstand < 70) {
+		ente.schaden(1);
+		gegner.set_existiert(false);
+	}
+	
+}
 																						//Definitioon der Funktionen
 void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum) {
 	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
