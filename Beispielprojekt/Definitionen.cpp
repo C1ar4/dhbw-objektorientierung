@@ -56,6 +56,12 @@ float Charakter::get_x() const {
 float Charakter::get_y() const {
 	return y;
 }
+void Charakter::set_x(float xwert) {
+	x = xwert;
+}
+void Charakter::set_y(float ywert) {
+	y = ywert;
+}
 int Charakter::get_winkel() const {
 	return winkel;
 }

@@ -35,6 +35,8 @@ public:
 		float get_x() const override;
 		float get_y() const override;
 		int get_winkel() const override;
+		void set_x(float xwert);
+		void set_y(float ywert);
 		void set_winkel(int uebergebner_winkel);
 		void schaden(int dmg);
 		float get_leben() const;
