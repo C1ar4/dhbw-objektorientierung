@@ -1,6 +1,20 @@
 #pragma once
 
 
+class Spieldaten {
+private:
+	int punkte;
+	int level;
+
+public: 
+	int get_punkte() const;
+	int get_level() const;
+	void set_punkte(int punkte_gesetzt);
+	void set_level(int level_gesetzt);
+	Spieldaten(int punkte, int level);
+};
+
+
 class Objekt {
 protected:
 	float x;
@@ -39,7 +53,8 @@ public:
 		void set_y(float ywert);
 		void set_winkel(int uebergebner_winkel);
 		void schaden(int dmg);
-		float get_leben() const;
+		int get_leben() const;
+		void set_leben(int leben_gesetzt);
 		float get_groesse_x() const;
 		float get_groesse_y() const;
 		void set_bewegen(bool bewegtsich);

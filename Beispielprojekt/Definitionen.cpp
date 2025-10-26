@@ -5,6 +5,21 @@ extern int x_breite;
 extern int y_hoehe;
 
 
+int Spieldaten::get_punkte() const {
+	return punkte;
+}
+int Spieldaten::get_level() const {
+	return level;
+}
+void Spieldaten::set_punkte(int punkte_gesetzt) {
+	punkte = punkte_gesetzt;
+}
+void Spieldaten::set_level(int level_gesetzt) {
+	level = level_gesetzt;
+}
+Spieldaten::Spieldaten(int punkte = 0, int level = 0) : punkte(punkte), level(level) {}
+
+
 
 Objekt::Objekt(float x, float y, int winkel) {
 	this->x = x;
@@ -71,8 +86,11 @@ void Charakter::set_winkel(int uebergebener_winkel) {
 void Charakter::schaden(int dmg) {
 	leben -= dmg;
 }
-float Charakter::get_leben() const {
+int Charakter::get_leben() const {
 	return leben;
+}
+void Charakter::set_leben(int leben_gesetzt) {
+	leben = leben_gesetzt;
 }
 float Charakter::get_groesse_x() const {
 	return groesse_x;

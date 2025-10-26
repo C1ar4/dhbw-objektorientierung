@@ -26,7 +26,7 @@
     <Image Include="Baum.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="ente.png">
+    <Image Include="Ente.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Stein.png">
@@ -39,6 +39,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Gegner_rechts.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Startbildschirm.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
