@@ -30,7 +30,7 @@ unsigned long long  dzeit_start = 0;
 unsigned long long  dzeit = 0;
 int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen wird, damit die Bewegung der Objekte nicht zu ruckelig wirkt
 
-vector<vector<float>> startpunkte_gegner = { {1550, 100}, {390, 1000}, {700, 670}, {1070, 370} };
+vector<vector<float>> startpunkte_gegner = { {1550, 100}, {390, 1000}, {700, 670}, {1070, 370}, {1100, 300}, {1200, 200} };
 int counter = 60;
 
 
@@ -59,7 +59,7 @@ class GameWindow : public Gosu::Window
 	vector<Stein> vector_stein;
 	Charakter cha;
 	Gosu::Image Gegner;
-	Charakter fisch;
+	vector<Charakter> vector_fisch;
 	Laser laser;
 	Gosu::Font font;				// erzeugt ein Text, der im Gamewindow ausgegeben werden kann
 	Gosu::Font font_groß;
@@ -76,7 +76,6 @@ public:
 		baum ("Baum.png"),
 		stein("Stein.png"),	
 		Gegner("Gegner_links.png"),
-		fisch(1000, 200, 0, 5, 35, 35, true, false),
 		laser(502, 693, 0, 100, 100, false, false),
 		spieldaten(0, 1),
 		font(20),							// 20 gibt die Textgroesse an
@@ -88,20 +87,24 @@ public:
 		vector_baum.push_back(Baum(225, 800, 0, 20, 70));
 		vector_baum.push_back(Baum(800, 900, 0, 20, 70));
 		vector_baum.push_back(Baum(600, 400, 0, 20, 70));
-		vector_baum.push_back(Baum(1700, 900, 0, 20, 70));
-		vector_baum.push_back(Baum(1800, 800, 0, 20, 70));
-		vector_baum.push_back(Baum(1830, 930, 0, 20, 70));
-		vector_baum.push_back(Baum(1750, 150, 0, 20, 70));
+		vector_baum.push_back(Baum(1850, 900, 0, 20, 70));
+		vector_baum.push_back(Baum(1600, 700, 0, 20, 70));
+		vector_baum.push_back(Baum(1650, 930, 0, 20, 70));
+		vector_baum.push_back(Baum(1850, 150, 0, 20, 70));
+		vector_baum.push_back(Baum(1400, 400, 0, 20, 70));
+		vector_baum.push_back(Baum(1200, 600, 0, 20, 70));
 		vector_stein.push_back(Stein(600, 100, 0, 35, 35));
 		vector_stein.push_back(Stein(800, 450, 0, 35, 35));
 		vector_stein.push_back(Stein(250, 930, 0, 35, 35));
-		vector_stein.push_back(Stein(240, 985, 0, 35, 35));
-		vector_stein.push_back(Stein(1300, 380, 0, 35, 35));
-		vector_stein.push_back(Stein(1220, 400, 0, 35, 35));
-		vector_stein.push_back(Stein(1100, 600, 0, 35, 35));
-		vector_stein.push_back(Stein(1650, 610, 0, 35, 35));
-		vector_stein.push_back(Stein(1800, 400, 0, 35, 35));
+		vector_stein.push_back(Stein(500, 985, 0, 35, 35));
+		vector_stein.push_back(Stein(1100, 100, 0, 35, 35));
+		vector_stein.push_back(Stein(1000, 500, 0, 35, 35));
+		vector_stein.push_back(Stein(1100, 350, 0, 35, 35));
+		vector_stein.push_back(Stein(1720, 610, 0, 35, 35));
+		vector_stein.push_back(Stein(1800, 300, 0, 35, 35));
 		vector_stein.push_back(Stein(1500, 950, 0, 35, 35));
+		vector_fisch.push_back(Charakter(1000, 200, 0, 3, 35, 35, true, false));
+
 	}
 
 																				// Wird bis zu 60x pro Sekunde aufgerufen.
@@ -181,16 +184,20 @@ public:
 			//font.draw_text(to_string(cha.test)+ ", " + to_string(cha.get_leben()), 150, 40, 0); //hier genauso
 			//font.draw_text(to_string(startpunkte_gegner.at(0).at(0)) + ", " + to_string(startpunkte_gegner.at(0).at(1)), 150, 60, 0);
 			font_groß.draw_text("Punkte:   " + to_string(spieldaten.get_punkte()), 850, 20, 0);		//zeigt die Punkte an
+			font_groß.draw_text("Level:   " + to_string(spieldaten.get_level()/4), 1700, 20, 0);		//zeigt das Level an
 			
 
 			draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
 			draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
-			if (fisch.get_existiert()) {
-				Gegner.draw_rot(fisch.get_x(), fisch.get_y(), 0, fisch.get_winkel()+90, 0.5, 0.5, scale_fisch, scale_fisch);
+			for (auto it = vector_fisch.begin(); it < vector_fisch.end(); it++) {	// läuft durch den Vektor mit den Fischen
+
+				if (it->get_existiert()) {
+					Gegner.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel()+90, 0.5, 0.5, scale_fisch, scale_fisch);
+					font.draw_text("Leben:   " + to_string(it->get_leben()), it->get_x() - 40, it->get_y() - 60, 0);			//zeigt die Leben des Gegners an
+				}
 			}
 			Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
 			font.draw_text("Leben:   " + to_string(cha.get_leben()), cha.get_x() - 40, cha.get_y() - 60, 0);			//zeigt die Leben der Ente an
-			font.draw_text("Leben:   " + to_string(fisch.get_leben()), fisch.get_x() - 40, fisch.get_y() - 60, 0);			//zeigt die Leben des Gegners an)
 		}
 	}
 
@@ -233,15 +240,17 @@ public:
 					//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			
 					for (int laserspeed = 1000; laserspeed > 0; laserspeed--) {										// Schleife, damtit der Laser nicht durch Ojekte glitcht
-					ueberprüfe_kollision_baum_laser(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum) trifft
-					ueberprüfe_kollision_stein_laser(vector_stein, laser);											// überprüft ob der Laser ein Obejrkt (Stein) trifft
-					if(!laser.get_ende_erreicht()) {
-						überprüfe_kollision_character_laser(fisch, laser, spieldaten);								// überprüft ob der Laser den Gegner trifft	
-					}
-					laser.bewegen(Gosu::offset_x(cha.get_winkel(), 1), Gosu::offset_y(cha.get_winkel(), 1));		// Senden des Lasers bis zum Rand
-					if(laser.get_ende_erreicht()) {
-						break;																						 // wenn der Laser ein Objekt trifft, wird die Schleife abgebrochen
-					}
+						ueberprüfe_kollision_baum_laser(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum) trifft
+						ueberprüfe_kollision_stein_laser(vector_stein, laser);											// überprüft ob der Laser ein Obejrkt (Stein) trifft
+						if(!laser.get_ende_erreicht()) {
+							for (auto it = vector_fisch.begin(); it < vector_fisch.end(); it++) {
+							überprüfe_kollision_character_laser(*it, laser, spieldaten);								// überprüft ob der Laser den Gegner trifft	
+							}
+						}
+						laser.bewegen(Gosu::offset_x(cha.get_winkel(), 1), Gosu::offset_y(cha.get_winkel(), 1));		// Senden des Lasers bis zum Rand
+						if(laser.get_ende_erreicht()) {
+							break;																						 // wenn der Laser ein Objekt trifft, wird die Schleife abgebrochen
+						}
 					}
 				}
 
@@ -249,45 +258,50 @@ public:
 				laser.set_schiesst(false);
 				laser.set_ende_erreicht(false);
 				}
+				if (spieldaten.get_punkte() >= spieldaten.get_level()) {			// pro 4 Punkte kommt ein neuer Fisch hinzu
+					vector_fisch.push_back(Charakter(1000, 200, 0, 5, 35, 35, true, false));
+					spieldaten.set_level(spieldaten.get_level() + 4);
+				}
+				for (auto fisch = vector_fisch.begin(); fisch < vector_fisch.end(); fisch++) {
+					if (fisch->get_existiert()) {
+						if (counter == 0) {
+							ueberprüfe_kollision_stein_character(vector_stein, *fisch);
+							ueberprüfe_kollision_baum_character(vector_baum, *fisch);
+							int winkel;
+							winkel = atan2(cha.get_y() - fisch->get_y(), cha.get_x() - fisch->get_x()) * (180.0 / M_PI);
+							winkel = winkel + 90;
 
-				if (fisch.get_existiert()) {
-					if (counter == 0) {
-						ueberprüfe_kollision_stein_character(vector_stein, fisch);
-						ueberprüfe_kollision_baum_character(vector_baum, fisch);
-						int winkel;
-						winkel = atan2(cha.get_y() - fisch.get_y(), cha.get_x() - fisch.get_x()) * (180.0 / M_PI);
-						winkel = winkel + 90;
 
+							if (winkel < 0) {
+								winkel = winkel + 360;
+							}
+							fisch->set_winkel(winkel);
+							/*while (!fisch.get_bewegen()) {
+								fisch.drehen(speed_drehen_ente);
+								ueberprüfe_kollision_stein_character(vector_stein, fisch);
+								ueberprüfe_kollision_baum_character(vector_baum, fisch);
+							}*/
+							if (fisch->get_bewegen()) {
+								double speed = 2.0 / updates_per_frame;
+								fisch->bewegen_x(Gosu::offset_x(fisch->get_winkel(), speed));
+								fisch->bewegen_y(Gosu::offset_y(fisch->get_winkel(), speed));
+							}
 
-						if (winkel < 0) {
-							winkel = winkel + 360;
+							ueberprüfe_kollision_character_gegner(*fisch, cha);
 						}
-						fisch.set_winkel(winkel);
-						/*while (!fisch.get_bewegen()) {
-							fisch.drehen(speed_drehen_ente);
-							ueberprüfe_kollision_stein_character(vector_stein, fisch);
-							ueberprüfe_kollision_baum_character(vector_baum, fisch);
-						}*/
-						if (fisch.get_bewegen()) {
-							double speed = 2.0 / updates_per_frame;
-							fisch.bewegen_x(Gosu::offset_x(fisch.get_winkel(), speed));
-							fisch.bewegen_y(Gosu::offset_y(fisch.get_winkel(), speed));
+						else {
+							counter = counter - 1;
 						}
-
-						ueberprüfe_kollision_character_gegner(fisch, cha);
+				
 					}
 					else {
-						counter = counter - 1;
+						int i = rand() % 4;
+						fisch->set_x(startpunkte_gegner.at(i).at(0));
+						fisch->set_y(startpunkte_gegner.at(i).at(1));
+						fisch->set_existiert(true);
+						fisch->set_leben(3);
+						counter = 60;
 					}
-				
-				}
-				else {
-					int i = rand() % 4;
-					fisch.set_x(startpunkte_gegner.at(i).at(0));
-					fisch.set_y(startpunkte_gegner.at(i).at(1));
-					fisch.set_existiert(true);
-					fisch.set_leben(5);
-					counter = 60;
 				}
 			}
 		}
