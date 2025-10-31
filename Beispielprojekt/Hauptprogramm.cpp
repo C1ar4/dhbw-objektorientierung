@@ -30,7 +30,7 @@ unsigned long long  dzeit_start = 0;
 unsigned long long  dzeit = 0;
 int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen wird, damit die Bewegung der Objekte nicht zu ruckelig wirkt
 
-vector<vector<float>> startpunkte_gegner = { {1550, 100}, {390, 1000}, {700, 670}, {1070, 370}, {1100, 300}, {1200, 200} };
+vector<vector<float>> startpunkte_gegner = { {1550, 100}, {390, 1000}, {700, 670}, {1070, 370}, {1100, 300}, {1200, 200},  {400, 900},  {550, 850}};
 int counter = 60;
 
 
@@ -318,7 +318,7 @@ public:
 				
 					}
 					else {
-						int i = rand() % 4;
+						int i = rand() % 8;
 						fisch->set_x(startpunkte_gegner.at(i).at(0));
 						fisch->set_y(startpunkte_gegner.at(i).at(1));
 						fisch->set_existiert(true);
