@@ -64,6 +64,7 @@ class GameWindow : public Gosu::Window
 	Gosu::Font font;				// erzeugt ein Text, der im Gamewindow ausgegeben werden kann
 	Gosu::Font font_groß;
 	Spieldaten spieldaten;
+	Gosu::Image herz;
 	
 public:
 
@@ -78,6 +79,7 @@ public:
 		Gegner("Gegner_links.png"),
 		laser(502, 693, 0, 100, 100, false, false),
 		spieldaten(0, 1),
+		herz("Herz.png"),
 		font(20),							// 20 gibt die Textgroesse an
 		font_groß(50)					// 50 gibt die Textgroesse an
 	{
@@ -190,14 +192,35 @@ public:
 			draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
 			draw_steine(vector_stein, stein);		// zeichnet alle Steine aus dem Vektor
 			for (auto it = vector_fisch.begin(); it < vector_fisch.end(); it++) {	// läuft durch den Vektor mit den Fischen
-
 				if (it->get_existiert()) {
 					Gegner.draw_rot(it->get_x(), it->get_y(), 0, it->get_winkel()+90, 0.5, 0.5, scale_fisch, scale_fisch);
-					font.draw_text("Leben:   " + to_string(it->get_leben()), it->get_x() - 40, it->get_y() - 60, 0);			//zeigt die Leben des Gegners an
+					if (it->get_leben() == 3) {	
+						herz.draw(it->get_x() - 40, it->get_y() - 70, 1, 0.03, 0.03);
+						herz.draw(it->get_x() - 15, it->get_y() - 70, 1, 0.03, 0.03);
+						herz.draw(it->get_x() + 10, it->get_y() - 70, 1, 0.03, 0.03);
+					}
+					else if (it->get_leben() == 2) {
+						herz.draw(it->get_x() - 30, it->get_y() - 70, 1, 0.03, 0.03);
+						herz.draw(it->get_x(), it->get_y() - 70, 1, 0.03, 0.03);
+					}
+					else if (it->get_leben() == 1) {
+						herz.draw(it->get_x() - 15, it->get_y() - 70, 1, 0.03, 0.03);
+					}
 				}
 			}
 			Ente.draw_rot(cha.get_x(), cha.get_y(), 0, cha.get_winkel(), 0.5, 0.5, scale_Ente, scale_Ente);				// Ente nach Laser, sodass die Ente über dem laser liegt, so sieht es aus als schiesst sie aus ihrem Schnabel
-			font.draw_text("Leben:   " + to_string(cha.get_leben()), cha.get_x() - 40, cha.get_y() - 60, 0);			//zeigt die Leben der Ente an
+			if (cha.get_leben() == 3) {	
+				herz.draw(cha.get_x() - 40, cha.get_y() - 75, 1, 0.03, 0.03);
+				herz.draw(cha.get_x() - 15, cha.get_y() - 75, 1, 0.03, 0.03);
+				herz.draw(cha.get_x() + 10, cha.get_y() - 75, 1, 0.03, 0.03);
+			}
+			else if (cha.get_leben() == 2) {
+				herz.draw(cha.get_x() - 30, cha.get_y() - 75, 1, 0.03, 0.03);
+				herz.draw(cha.get_x(), cha.get_y() - 75, 1, 0.03, 0.03);
+			}
+			else if (cha.get_leben() == 1) {
+				herz.draw(cha.get_x() - 15, cha.get_y() - 75, 1, 0.03, 0.03);
+			}
 		}
 	}
 

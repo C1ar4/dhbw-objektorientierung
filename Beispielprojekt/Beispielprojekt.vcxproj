@@ -177,6 +177,7 @@
     <Image Include="Ente.png" />
     <Image Include="Gegner_links.png" />
     <Image Include="Gegner_rechts.png" />
+    <Image Include="Herz.png" />
     <Image Include="Karte.png" />
     <Image Include="Startbildschirm.png" />
     <Image Include="Stein.png" />
