@@ -65,6 +65,7 @@ class GameWindow : public Gosu::Window
 	Gosu::Font font_groﬂ;
 	Spieldaten spieldaten;
 	Gosu::Image herz;
+	Gosu::Sample laser_schuss_ton;
 	
 public:
 
@@ -74,14 +75,15 @@ public:
 		Startbildschirm("Startbildschirm.png"),
 		Ente("Ente.png"),
 		cha(50, 380, 90, 3, 35, 35, true, true),
-		baum ("Baum.png"),
-		stein("Stein.png"),	
+		baum("Baum.png"),
+		stein("Stein.png"),
 		Gegner("Gegner_links.png"),
 		laser(502, 693, 0, 100, 100, false, false),
 		spieldaten(0, 1),
 		herz("Herz.png"),
 		font(20),							// 20 gibt die Textgroesse an
-		font_groﬂ(50)					// 50 gibt die Textgroesse an
+		font_groﬂ(50),					// 50 gibt die Textgroesse an
+		laser_schuss_ton("Laser_schuss.mp3")
 	{
 		set_caption("Gamewindow");
 		vector_baum.push_back(Baum(200, 150, 0, 20, 70));
@@ -106,14 +108,13 @@ public:
 		vector_stein.push_back(Stein(1800, 300, 0, 35, 35));
 		vector_stein.push_back(Stein(1500, 950, 0, 35, 35));
 		vector_fisch.push_back(Charakter(1000, 200, 0, 3, 35, 35, true, false));
-
 	}
 
 																				// Wird bis zu 60x pro Sekunde aufgerufen.
 																				// Wenn die Grafikkarte oder der Prozessor nicht mehr hinterherkommen,
 																				// dann werden `draw` Aufrufe ausgelassen und die Framerate sinkt
 	void draw() override
-	{
+	{	
 		if (startbildschirm) {
 			Startbildschirm.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / Startbildschirm.height());
 			font_groﬂ.draw_text("Name des Spiels", x_breite / 2 - 220, 100, 0, 1.5, 1.5, Gosu::Color::BLACK);
@@ -255,6 +256,7 @@ public:
 						laser.set_x_start(cha.get_x());
 						laser.set_y(cha.get_y());
 						laser.set_y_start(cha.get_y());
+						laser_schuss_ton.play();
 					}
 
 					laser.set_schiesst(true);

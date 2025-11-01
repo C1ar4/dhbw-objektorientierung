@@ -124,6 +124,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>./gosu/lib64/</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -184,6 +185,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Game_over.mp3">
+      <FileType>Document</FileType>
+    </Media>
+    <Media Include="Laser_schuss.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
