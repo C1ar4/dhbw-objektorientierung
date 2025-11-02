@@ -4,6 +4,7 @@
 #include "Objekte_deklarieren.h"
 #include <vector>
 #include <cmath>
+#include <fstream>
 #include <iostream>  //ich hatte mal was damit versucht, hat aber nicht funktioniert. Insofern kann das auch eigentlich wieder weg
 #include <cstdlib>
 using namespace std;
@@ -13,8 +14,10 @@ int x_breite = 1920;
 int y_hoehe = 1080;
 
 bool startbildschirm = true;
+bool anfang_spiel = true;
 int Laser_delay = 12;					//Delay,damit Laser nicht zu lang bleibt, nachdem geschossen wurde
 int Laser_dalay_cpy = Laser_delay;;
+int ges_highscore = 0;
 
 int speed_drehen_ente = 1;
 float scale_Ente = 0.1;
@@ -32,6 +35,7 @@ int updates_per_frame = 4;			// wie oft die Update Funktion pro Frame aufgerufen
 
 vector<vector<float>> startpunkte_gegner = { {1550, 100}, {390, 1000}, {700, 670}, {1070, 370}, {1100, 300}, {1200, 200},  {400, 900},  {550, 850}};
 int counter = 60;
+int counter2 = 120;
 
 
 void ueberpr¸fe_kollision_character_gegner(Charakter& gegner, Charakter& ente);
@@ -66,6 +70,8 @@ class GameWindow : public Gosu::Window
 	Spieldaten spieldaten;
 	Gosu::Image herz;
 	Gosu::Sample laser_schuss_ton;
+	Gosu::Sample game_over_ton;
+	Gosu::Image game_over_bild;
 	
 public:
 
@@ -79,11 +85,13 @@ public:
 		stein("Stein.png"),
 		Gegner("Gegner_links.png"),
 		laser(502, 693, 0, 100, 100, false, false),
-		spieldaten(0, 1),
+		spieldaten(0, 1, 0, 0),
 		herz("Herz.png"),
 		font(20),							// 20 gibt die Textgroesse an
 		font_groﬂ(50),					// 50 gibt die Textgroesse an
-		laser_schuss_ton("Laser_schuss.mp3")
+		laser_schuss_ton("Laser_schuss.mp3"),
+		game_over_ton("Game_over.mp3"),
+		game_over_bild("Game_over_bild.png")
 	{
 		set_caption("Gamewindow");
 		vector_baum.push_back(Baum(200, 150, 0, 20, 70));
@@ -116,16 +124,59 @@ public:
 	void draw() override
 	{	
 		if (startbildschirm) {
-			Startbildschirm.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / Startbildschirm.height());
-			font_groﬂ.draw_text("Name des Spiels", x_breite / 2 - 220, 100, 0, 1.5, 1.5, Gosu::Color::BLACK);
-			font_groﬂ.draw_text("Druecke Leertaste um zu starten oder ESC um jederzeit zu schliessen", x_breite / 2 - 600, 1000, 0, 1, 1, Gosu::Color::BLACK);
-			if (input().down(Gosu::KB_SPACE)) {
-				startbildschirm = false;
+			if (anfang_spiel) {
+				spieldaten.set_ges_highscore(ges_highscore);
+				Startbildschirm.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / Startbildschirm.height());
+				font_groﬂ.draw_text("Name des Spiels", x_breite / 2 - 220, 100, 0, 1.5, 1.5, Gosu::Color::BLACK);
+				font_groﬂ.draw_text("Druecke Leertaste um zu starten oder ESC um jederzeit zu schliessen", x_breite / 2 - 700, 1000, 0, 1, 1, Gosu::Color::BLACK);
+				if (input().down(Gosu::KB_SPACE)) {
+					startbildschirm = false;
+					anfang_spiel = false;
+				}
+			}
+			else {
+				game_over_bild.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / game_over_bild.height());
+				font_groﬂ.draw_text("Druecke Leertaste um zu starten oder ESC um jederzeit zu schliessen", x_breite / 2 - 700, 1010, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text("Aktueller Score:", 1475, 680, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text(to_string(spieldaten.get_punkte()), 1500, 730, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text("Aktueller Highscore:", 1475, 780, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text(to_string(spieldaten.get_highscore()), 1500, 830, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text("Insgesamter Highscore:", 1475, 880, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				font_groﬂ.draw_text(to_string(spieldaten.get_ges_highscore()), 1500, 930, 0, 0.8, 0.8, Gosu::Color::BLACK);
+
+
+				if (counter2 <= 0) {
+					if (input().down(Gosu::KB_SPACE)) {
+
+						spieldaten.set_punkte(0);
+						spieldaten.set_level(1);
+						startbildschirm = false;
+
+					}
+				}
+				else {
+					counter2 = counter2 - 1;
+				}
+				
 			}
 		}
 
-		if (cha.get_leben() <= 0 || input().down(Gosu::KB_ESCAPE)) {			// wenn die Ente keine Leben mehr hat, wird das Spiel beendet
+		if (input().down(Gosu::KB_ESCAPE)) {	
+			ges_highscore = spieldaten.get_ges_highscore();
 			close();
+		}
+
+		if (!startbildschirm && cha.get_leben() <= 0) {						// wenn die Ente keine Leben mehr hat, wird die Runde beendet
+			if (spieldaten.get_punkte() > spieldaten.get_highscore()) {
+				spieldaten.set_highscore(spieldaten.get_punkte());
+			}
+			if (spieldaten.get_highscore() > spieldaten.get_ges_highscore()) {
+				spieldaten.set_ges_highscore(spieldaten.get_highscore());
+			}
+			counter2 = 120;
+			cha.set_leben(3);
+			startbildschirm = true;
+			game_over_ton.play();
 		}
 
 		if(!startbildschirm) {
@@ -336,8 +387,23 @@ public:
 						// C++ Hauptprogramm
 int main()
 {
+
+	ifstream infile("highscore.txt");
+	if (infile.is_open()) {
+		if (infile >> ges_highscore) {
+
+		}
+	}
+	
+
 	GameWindow window;
 	window.show();
+
+	ofstream outfile("highscore.txt");
+	if (outfile.is_open()) { // ‹berpr¸ft, ob die Datei erfolgreich geˆffnet wurde
+		outfile << ges_highscore;
+		outfile.close(); // Schlieﬂt die Datei
+	}
 }
 
 

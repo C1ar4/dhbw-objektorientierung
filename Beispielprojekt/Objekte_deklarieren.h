@@ -5,13 +5,19 @@ class Spieldaten {
 private:
 	int punkte;
 	int level;
+	int highscore;
+	int gesamt_highscore;
 
 public: 
 	int get_punkte() const;
 	int get_level() const;
+	int get_highscore() const;
+	int get_ges_highscore() const; 
 	void set_punkte(int punkte_gesetzt);
 	void set_level(int level_gesetzt);
-	Spieldaten(int punkte, int level);
+	void set_highscore(int highscore_gesetzt);
+	void set_ges_highscore(int ges_highscore_gesetzt);
+	Spieldaten(int punkte, int level, int highscore, int gesamt_highscore);
 };
 
 

@@ -11,13 +11,25 @@ int Spieldaten::get_punkte() const {
 int Spieldaten::get_level() const {
 	return level;
 }
+int Spieldaten::get_highscore() const {
+	return highscore;
+}
+int Spieldaten::get_ges_highscore() const {
+	return gesamt_highscore;
+}
 void Spieldaten::set_punkte(int punkte_gesetzt) {
 	punkte = punkte_gesetzt;
 }
 void Spieldaten::set_level(int level_gesetzt) {
 	level = level_gesetzt;
 }
-Spieldaten::Spieldaten(int punkte = 0, int level = 0) : punkte(punkte), level(level) {}
+void Spieldaten::set_highscore(int highscore_gesetzt) {
+	highscore = highscore_gesetzt;
+}
+void Spieldaten::set_ges_highscore(int ges_highscore_gesetzt) {
+	gesamt_highscore = ges_highscore_gesetzt;
+}
+Spieldaten::Spieldaten(int punkte = 0, int level = 0, int highscore = 0, int gesamt_highscore = 0) : punkte(punkte), level(level), highscore(highscore), gesamt_highscore(gesamt_highscore){}
 
 
 
