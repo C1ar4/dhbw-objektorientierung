@@ -150,6 +150,9 @@ public:
 
 						spieldaten.set_punkte(0);
 						spieldaten.set_level(1);
+						if (vector_fisch.size() > 1) {
+							vector_fisch.erase(vector_fisch.begin() + 1, vector_fisch.end());
+						}
 						startbildschirm = false;
 
 					}
