@@ -5,7 +5,6 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
-#include <iostream>  //ich hatte mal was damit versucht, hat aber nicht funktioniert. Insofern kann das auch eigentlich wieder weg
 #include <cstdlib>
 using namespace std;
 
@@ -15,7 +14,7 @@ int y_hoehe = 1080;
 
 bool startbildschirm = true;
 bool anfang_spiel = true;
-int Laser_delay = 12;					//Delay,damit Laser nicht zu lang bleibt, nachdem geschossen wurde
+int Laser_delay = 12;					//Delay, damit Laser nicht zu lang bleibt, nachdem geschossen wurde
 int Laser_dalay_cpy = Laser_delay;;
 int ges_highscore = 0;
 
@@ -56,6 +55,9 @@ class GameWindow : public Gosu::Window
 {	
 	Gosu::Image Karte;
 	Gosu::Image Startbildschirm;
+	Gosu::Image Laserduck;
+	Gosu::Image Druecke_Return_um;
+	Gosu::Image Untertitel;
 	Gosu::Image Ente;
 	Gosu::Image baum;
 	vector<Baum> vector_baum;
@@ -79,6 +81,9 @@ public:
 		: Window(x_breite, y_hoehe, Fenster),
 		Karte("Karte.png"),
 		Startbildschirm("Startbildschirm.png"),
+		Laserduck("Laserduck.png"),
+		Druecke_Return_um("Druecke_Return_um.png"),
+		Untertitel("Untertitel.png"),
 		Ente("Ente.png"),
 		cha(50, 380, 90, 3, 35, 35, true, true),
 		baum("Baum.png"),
@@ -87,8 +92,8 @@ public:
 		laser(502, 693, 0, 100, 100, false, false),
 		spieldaten(0, 1, 0, 0),
 		herz("Herz.png"),
-		font(20),							// 20 gibt die Textgroesse an
-		font_groß(50),					// 50 gibt die Textgroesse an
+		font(20),						// 20 gibt die Textgroesse an
+		font_groß(35),					// 50 gibt die Textgroesse an
 		laser_schuss_ton("Laser_schuss.mp3"),
 		game_over_ton("Game_over.mp3"),
 		game_over_bild("Game_over_bild.png")
@@ -127,16 +132,17 @@ public:
 			if (anfang_spiel) {
 				spieldaten.set_ges_highscore(ges_highscore);
 				Startbildschirm.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / Startbildschirm.height());
-				font_groß.draw_text("Name des Spiels", x_breite / 2 - 220, 100, 0, 1.5, 1.5, Gosu::Color::BLACK);
-				font_groß.draw_text("Druecke Leertaste um zu starten oder ESC um jederzeit zu schliessen", x_breite / 2 - 700, 1000, 0, 1, 1, Gosu::Color::BLACK);
-				if (input().down(Gosu::KB_SPACE)) {
+				Laserduck.draw(x_breite / 2 -400, -150, 0, 0.8, 0.6);
+				Druecke_Return_um.draw(1470, 750, 0, 0.3, 0.3);
+				Untertitel.draw(50, 250, 0, 0.35, 0.35);
+				if (input().down(Gosu::KB_RETURN)) {
 					startbildschirm = false;
 					anfang_spiel = false;
 				}
 			}
 			else {
 				game_over_bild.draw(0, 0, 0, (double)x_breite / Startbildschirm.width(), (double)y_hoehe / game_over_bild.height());
-				font_groß.draw_text("Druecke Leertaste um zu starten oder ESC um jederzeit zu schliessen", x_breite / 2 - 700, 1010, 0, 0.8, 0.8, Gosu::Color::BLACK);
+				Druecke_Return_um.draw(50, 750, 0, 0.2, 0.2);
 				font_groß.draw_text("Aktueller Score:", 1475, 680, 0, 0.8, 0.8, Gosu::Color::BLACK);
 				font_groß.draw_text(to_string(spieldaten.get_punkte()), 1500, 730, 0, 0.8, 0.8, Gosu::Color::BLACK);
 				font_groß.draw_text("Aktueller Highscore:", 1475, 780, 0, 0.8, 0.8, Gosu::Color::BLACK);
@@ -146,7 +152,7 @@ public:
 
 
 				if (counter2 <= 0) {
-					if (input().down(Gosu::KB_SPACE)) {
+					if (input().down(Gosu:: KB_RETURN)) {
 
 						spieldaten.set_punkte(0);
 						spieldaten.set_level(1);
@@ -186,14 +192,14 @@ public:
 		Karte.draw_rot(x_breite/2, y_hoehe/2, 0, 0, 0.5, 0.5, scale_Karte_x, scale_Karte_y);
 		}
 
-		FPS_counter++;													//FPS Anzeige
+		FPS_counter++;			//FPS Anzeige
 		if(Gosu::milliseconds() - dzeit_start >= 500) {
 			dzeit_start = Gosu::milliseconds();
 			FPS = FPS_counter;
 			FPS_counter = 0;
 		}
 		font.draw_text(to_string(FPS * 2) + "  FPS", 10, 10, 0);
-		font.draw_text(to_string(Gosu::milliseconds() - dzeit) + "  ms  Aufloesung:  " + to_string(y_hoehe), 10, 25, 0);				// Zeigt die Zeit zwischen 2 Frames an
+		font.draw_text(to_string(Gosu::milliseconds() - dzeit) + "  ms  Aufloesung:  " + to_string(y_hoehe), 10, 25, 0);		// Zeigt die Zeit zwischen 2 Frames an
 		dzeit = Gosu::milliseconds();
 
 
@@ -217,7 +223,6 @@ public:
 						laser.get_x() - 1, laser.get_y() + 1, Gosu::Color::RED,
 						0.0
 					);
-					font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);    // muss man dann noch rausmachen, hatte ich ursprünglich drin, weil etwas nicht ganz funktioniert hat und ich rausfinden wollte warum
 				}
 				else {
 					Gosu::Graphics::draw_line(
@@ -230,18 +235,15 @@ public:
 						laser.get_x() - 1, laser.get_y() - 1, Gosu::Color::RED,
 						0.0
 					);
-					font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
+					//font.draw_text(to_string(laser.get_winkel()) + "  Winkel Laser", 150, 10, 0);   //muss man dann noch rausmachen 
 				}
 			}
 			if (!laser.get_schiesst()) {
 				Laser_delay = Laser_dalay_cpy;
 			}
 		
-			//font.draw_text(to_string(cha.winkel_zu_stein) + ", " + to_string(cha.get_winkel()) + ", " + to_string(cha.winkeldiff_zum_stein) + ", " + to_string(cha.abstand_stein), 150, 20, 0);  //ist nur zur Fehlersuche drin. kann also auch wieder raus
-			//font.draw_text(to_string(cha.test)+ ", " + to_string(cha.get_leben()), 150, 40, 0); //hier genauso
-			//font.draw_text(to_string(startpunkte_gegner.at(0).at(0)) + ", " + to_string(startpunkte_gegner.at(0).at(1)), 150, 60, 0);
 			font_groß.draw_text("Punkte:   " + to_string(spieldaten.get_punkte()), 850, 20, 0);		//zeigt die Punkte an
-			font_groß.draw_text("Level:   " + to_string(spieldaten.get_level()/4), 1700, 20, 0);		//zeigt das Level an
+			font_groß.draw_text("Level:   " + to_string(spieldaten.get_level()/4), 1700, 20, 0);	//zeigt das Level an
 			
 
 			draw_bäume(vector_baum, baum);			// zeichnet alle Bäume aus dem Vektor
@@ -279,7 +281,7 @@ public:
 		}
 	}
 
-															// Wird 60x pro Sekunde aufgerufen
+																// Wird 60x pro Sekunde aufgerufen
 	void update() override
 	{
 		if (!startbildschirm) {
@@ -289,7 +291,7 @@ public:
 					cha.drehen(-(speed_drehen_ente));
 					laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 				}
-				if(input().down(Gosu::KB_RIGHT)){			// Bewege die Ente nach rechts													ich hab hier das else if zu einem if gemacht. ich finds besser wenn sich die Ente auch während dem Bewegen drehen kann
+				if(input().down(Gosu::KB_RIGHT)){				// Bewege die Ente nach rechts												
 					cha.drehen(speed_drehen_ente);
 					laser.set_schiesst(false);					// sorgt dafür, dass der Laser weggeht, wenn die Ente sich weiterdreht
 				}
@@ -315,10 +317,8 @@ public:
 
 					laser.set_schiesst(true);
 					laser.set_winkel(cha.get_winkel());
-					//laser.bewegen_y(Gosu::offset_y(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
-					//laser.bewegen_x(Gosu::offset_x(cha.get_winkel(), laserspeed));		funktioniert nicht so gut
 			
-					for (int laserspeed = 1000; laserspeed > 0; laserspeed--) {										// Schleife, damtit der Laser nicht durch Ojekte glitcht
+					for (int laserspeed = 1000; laserspeed > 0; laserspeed--) {											// Schleife, damtit der Laser nicht durch Ojekte glitcht
 						ueberprüfe_kollision_baum_laser(vector_baum, laser);											// überprüft ob der Laser ein Obejrkt (Baum) trifft
 						ueberprüfe_kollision_stein_laser(vector_stein, laser);											// überprüft ob der Laser ein Obejrkt (Stein) trifft
 						if(!laser.get_ende_erreicht()) {
@@ -350,16 +350,11 @@ public:
 							winkel = atan2(cha.get_y() - fisch->get_y(), cha.get_x() - fisch->get_x()) * (180.0 / M_PI);
 							winkel = winkel + 90;
 
-
 							if (winkel < 0) {
 								winkel = winkel + 360;
 							}
 							fisch->set_winkel(winkel);
-							/*while (!fisch.get_bewegen()) {
-								fisch.drehen(speed_drehen_ente);
-								ueberprüfe_kollision_stein_character(vector_stein, fisch);
-								ueberprüfe_kollision_baum_character(vector_baum, fisch);
-							}*/
+
 							if (fisch->get_bewegen()) {
 								double speed = 2.0 / updates_per_frame;
 								fisch->bewegen_x(Gosu::offset_x(fisch->get_winkel(), speed));
@@ -390,7 +385,6 @@ public:
 						// C++ Hauptprogramm
 int main()
 {
-
 	ifstream infile("highscore.txt");
 	if (infile.is_open()) {
 		if (infile >> ges_highscore) {
@@ -447,7 +441,7 @@ void draw_bäume(vector<Baum>& vector_baum, Gosu::Image& baum) {
 	}
 }
 
-void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser) {														// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
 	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
 		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
 			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Baum trifft, hört er auf zu schießen
@@ -457,21 +451,6 @@ void ueberprüfe_kollision_baum_laser(vector<Baum>& vector_baum, Laser& laser) {	
 }
 
 void ueberprüfe_kollision_baum_character(vector<Baum>& vector_baum, Charakter& ente) {
-	/*float xabstand;
-	float xabstandwinkel;
-	float yabstand;
-	float yabstandwinkel;
-	for (auto it = vector_baum.begin(); it != vector_baum.end(); ++it) {
-		xabstand = abs(ente.get_x() - it->get_x());
-		xabstandwinkel = abs(ente.get_x() - 5 * cos(ente.get_winkel() * 3.14159 / 180) - it->get_x());
-		yabstand = abs(ente.get_y() - it->get_y());
-		yabstandwinkel = abs(ente.get_y() + ente.get_groesse_y() * sin(ente.get_winkel() * 3.14159 / 180) - it->get_y());
-		if ((xabstand < 70) && (yabstand < 70) && xabstandwinkel <= xabstand && yabstandwinkel <= yabstand) {
-			return false;
-		}
-	}
-	return true;*/
-
 	float xabstand;
 	float yabstand;
 	float abstand;
@@ -505,7 +484,6 @@ void ueberprüfe_kollision_baum_character(vector<Baum>& vector_baum, Charakter& e
 			ente.abstand_stein = abstand;
 		}
 	}
-
 }
 
 void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein) {
@@ -514,7 +492,7 @@ void draw_steine(vector<Stein>& vector_stein, Gosu::Image& stein) {
 	}
 }
 
-void ueberprüfe_kollision_stein_laser(vector<Stein>& vector_stein, Laser& laser) {																			// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
+void ueberprüfe_kollision_stein_laser(vector<Stein>& vector_stein, Laser& laser) {													// Diese Funktion soll überprüfen, ob der Laser einen Baum oder Stein trifft
 	for (auto it = vector_stein.begin(); it != vector_stein.end(); ++it) {
 		if (it->get_x() - it->get_groesse_x() <= laser.get_x() && laser.get_x() <= it->get_x() + it->get_groesse_x() &&
 			it->get_y() - it->get_groesse_y() <= laser.get_y() && laser.get_y() <= it->get_y() + it->get_groesse_y()) {		        // wenn der Laser den Stein trifft, hört er auf zu schießen
@@ -557,5 +535,4 @@ void ueberprüfe_kollision_stein_character(vector<Stein>& vector_stein, Charakter
 			ente.abstand_stein = abstand;
 		}
 	}
-	
 }

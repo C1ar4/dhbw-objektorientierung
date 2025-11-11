@@ -47,6 +47,18 @@
     <Image Include="Herz.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Game_over_bild.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Laserduck.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Druecke_Return_um.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Untertitel.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h">
@@ -56,5 +68,8 @@
   <ItemGroup>
     <Media Include="Game_over.mp3" />
     <Media Include="Laser_schuss.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="highscore.txt" />
   </ItemGroup>
 </Project>

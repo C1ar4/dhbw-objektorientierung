@@ -175,13 +175,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Baum.png" />
+    <Image Include="Druecke_Return_um.png" />
     <Image Include="Ente.png" />
+    <Image Include="Game_over_bild.png" />
     <Image Include="Gegner_links.png" />
     <Image Include="Gegner_rechts.png" />
     <Image Include="Herz.png" />
     <Image Include="Karte.png" />
+    <Image Include="Laserduck.png" />
     <Image Include="Startbildschirm.png" />
     <Image Include="Stein.png" />
+    <Image Include="Untertitel.png" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objekte_deklarieren.h" />
@@ -191,6 +195,9 @@
       <FileType>Document</FileType>
     </Media>
     <Media Include="Laser_schuss.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="highscore.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
